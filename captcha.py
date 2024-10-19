@@ -10,7 +10,7 @@ captcha_image = {}
 tz = datetime.timezone(datetime.timedelta(hours=8))
 
 async def generate_captcha(self, obj: commands.Context | discord.Interaction | discord.Message, target: discord.User) -> discord.Message | bool | None:
-    if str(target.id) not in captcha or int(datetime.datetime.now(tz=tz).timestamp()) > captcha[str(target.id)]+1200: # 未驗證或距上次驗證未滿 20 分鐘
+    if str(target.id) not in captcha or int(datetime.datetime.now(tz=tz).timestamp()) > captcha[str(target.id)]+1200: # 未驗證 / 距上次驗證已超過 20 分鐘 -> 進行驗證程序
         while True:
             verify = os.urandom(2).hex() # 生成驗證碼
             if not any(c in verify for c in ('1', '7', 'l', '0', 'o', '6', 'b', '9', 'q', '2', 'z', '5', 's')): # 檢查是否有容易混淆的字元
@@ -48,5 +48,5 @@ async def generate_captcha(self, obj: commands.Context | discord.Interaction | d
                 return msg
         finally:
             if target.id in captcha_image: captcha_image.pop(target.id)
-    else: # 距上次驗證未滿 20 分鐘
+    else: # 無需驗證
         return True
